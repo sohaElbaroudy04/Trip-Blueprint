@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Login — Know your destination{% endblock %}
+
+{% block content %}
+<div class="login-page">
+
+  <div class="login-slogan">
+    <h1>Know your<br>destination.</h1>
+    <p>Plan less. Experience more.</p>
+  </div>
+  
+  <div class="login-form-box">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-inline">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('auth.login') }}">
+      <div>
+        <label class="form-label">Email</label>
+        <input type="email" name="email" placeholder="demo@gmail.com" required />
+      </div>
+      <div style="margin-top: 14px;">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" placeholder="*******" required />
+      </div>
+      <button type="submit" class="btn-signin" style="margin-top: 18px;">Sign In</button>
+    </form>
+
+    <div class="login-links">
+      <a href="{{ url_for('auth.register') }}">Don't have an account? Sign up</a>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

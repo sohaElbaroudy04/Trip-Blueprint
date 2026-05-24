@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Register — Know your destination{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .login-page {
+    position: relative;
+    height: calc(100vh - 56px);
+    background-image: url('/static/pexels-matteobasilephoto-12970884.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 80px;
+  }
+
+  .login-form-box {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(2px);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .login-form-box .form-label {
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .login-form-box input {
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    background: var(--white);
+    color: var(--text);
+    outline: none;
+  }
+  .login-form-box input:focus { box-shadow: 0 0 0 2px var(--blue); }
+  .login-form-box input::placeholder { color: #aaa; }
+  .btn-signin {
+    width: 100%;
+    padding: 12px;
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: opacity 0.15s;
+  }
+  .btn-signin:hover { opacity: 0.88; }
+  .login-links { text-align: center; font-size: 13px; }
+  .login-links a { color: var(--white); text-decoration: underline; opacity: 0.85; }
+  .login-links a:hover { opacity: 1; }
+  .flash-inline {
+    background: rgba(255,255,255,0.2);
+    color: var(--white);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    text-align: center;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-page">
+  <div class="login-slogan">
+    <h1>Know your<br>destination.</h1>
+    <p>Plan less. Experience more.</p>
+  </div>
+  <div class="login-form-box">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-inline">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <form method="POST" action="{{ url_for('auth.register') }}">
+      <div>
+        <label class="form-label">Username</label>
+        <input type="text" name="username" placeholder="johndoe12" required />
+      </div>
+      <div style="margin-top: 14px;">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" placeholder="demo@gmail.com" required />
+      </div>
+      <div style="margin-top: 14px;">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" placeholder="*******" required />
+      </div>
+      <button type="submit" class="btn-signin" style="margin-top: 18px;">Register</button>
+    </form>
+    <div class="login-links">
+      <a href="{{ url_for('auth.login') }}">Already have an account? Sign in</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

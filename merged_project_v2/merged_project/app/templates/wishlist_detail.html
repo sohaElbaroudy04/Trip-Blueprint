@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ wishlist.title }}{% endblock %}
+{% block content %}
+<div class="page" style="max-width:800px;">
+  <a href="{{ url_for('community.community') }}" style="font-size:13px; color:var(--text-soft); text-decoration:none;">← Back to Community</a>
+
+  <div style="margin:20px 0 32px;">
+    <h1 class="page-title">{{ wishlist.title }}</h1>
+    <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center; margin-top:10px;">
+      <span style="font-size:15px; color:var(--text-soft);">📍 {{ wishlist.destination }}</span>
+      {% if wishlist.duration_days %}
+      <span style="font-size:15px; color:var(--text-soft);">🗓 {{ wishlist.duration_days }} days</span>
+      {% endif %}
+      <span style="font-size:15px; font-weight:600; color:var(--terra);">${{ wishlist.estimated_budget }} estimated</span>
+      <span style="font-size:13px; color:var(--text-soft);">by <strong>{{ wishlist.user.username }}</strong></span>
+    </div>
+  </div>
+
+  {% if wishlist.description %}
+  <div style="background:var(--white); border:1px solid rgba(0,0,0,0.07); border-radius:var(--radius); padding:28px;">
+    <h2 style="font-family:var(--font-heading); font-size:20px; color:var(--navy); margin-bottom:14px;">About this trip</h2>
+    <p style="font-size:14px; color:var(--navy); line-height:1.9; white-space:pre-line;">{{ wishlist.description }}</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

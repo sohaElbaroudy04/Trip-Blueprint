@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="page">
+
+  <!-- Profile Header -->
+  <div style="background:var(--white); border:1px solid rgba(0,0,0,0.07); border-radius:var(--radius); padding:32px; margin-bottom:32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px;">
+    <div style="display:flex; align-items:center; gap:20px;">
+      <div style="width:64px; height:64px; border-radius:50%; background:var(--blue); color:var(--white); display:flex; align-items:center; justify-content:center; font-family:var(--font-heading); font-size:24px; font-weight:500; flex-shrink:0;">
+        {{ current_user.username[0].upper() }}
+      </div>
+      <div>
+        <h1 style="font-family:var(--font-heading); font-size:24px; color:var(--navy); margin-bottom:4px;">{{ current_user.username }}</h1>
+        <p style="font-size:14px; color:var(--text-soft);">{{ current_user.email }}</p>
+        <p style="font-size:13px; color:var(--text-soft);">Member since {{ current_user.created_at.strftime('%B %Y') }}</p>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <a href="{{ url_for('auth.edit_profile') }}" class="btn-primary">Edit Profile</a>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:36px;">
+    <div style="background:var(--white); border:1px solid rgba(0,0,0,0.07); border-radius:var(--radius); padding:20px; text-align:center;">
+      <div style="font-family:var(--font-heading); font-size:32px; color:var(--navy);">{{ trips|length }}</div>
+      <div style="font-size:13px; color:var(--text-soft);">Trips Shared</div>
+    </div>
+    <div style="background:var(--white); border:1px solid rgba(0,0,0,0.07); border-radius:var(--radius); padding:20px; text-align:center;">
+      <div style="font-family:var(--font-heading); font-size:32px; color:var(--navy);">{{ trips|selectattr('is_public')|list|length }}</div>
+      <div style="font-size:13px; color:var(--text-soft);">Public Blueprints</div>
+    </div>
+    <div style="background:var(--white); border:1px solid rgba(0,0,0,0.07); border-radius:var(--radius); padding:20px; text-align:center;">
+      <div style="font-family:var(--font-heading); font-size:32px; color:var(--navy);">{{ reviews|length }}</div>
+      <div style="font-size:13px; color:var(--text-soft);">Reviews Written</div>
+    </div>
+  </div>
+
+  <!-- My Trips -->
+  <h2 style="font-family:var(--font-heading); font-size:22px; color:var(--navy); margin-bottom:16px;">My Trips</h2>
+  {% if trips %}
+  <div class="trip-grid" style="margin-bottom:36px;">
+    {% for trip in trips %}
+    <div class="trip-card">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+        <h3 style="margin:0;">{{ trip.name }}</h3>
+        {% if trip.is_public %}
+        <span style="font-size:11px; background:#E1F5EE; color:#0F6E56; padding:2px 8px; border-radius:20px; flex-shrink:0; margin-left:8px;">Public</span>
+        {% else %}
+        <span style="font-size:11px; background:#f0f0f0; color:#888; padding:2px 8px; border-radius:20px; flex-shrink:0; margin-left:8px;">Private</span>
+        {% endif %}
+      </div>
+      <p>📍 {{ trip.destination }}</p>
+      {% if trip.duration_days %}<p>🗓 {{ trip.duration_days }} days</p>{% endif %}
+      <p class="budget">${{ trip.budget }} total</p>
+      <a href="{{ url_for('trip.trip_detail', id=trip.id) }}" style="font-size:13px; color:var(--blue); font-weight:500; margin-top:14px; display:inline-block;">View & Edit →</a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p style="color:var(--text-soft); margin-bottom:36px;">No trips yet. <a href="{{ url_for('trip.new_trip') }}" style="color:var(--blue);">Share your first trip</a></p>
+  {% endif %}
+
+  <!-- My Reviews -->
+  <h2 style="font-family:var(--font-heading); font-size:22px; color:var(--navy); margin-bottom:16px;">My Reviews</h2>
+  {% if reviews %}
+  <div style="display:flex; flex-direction:column; gap:12px;">
+    {% for review in reviews %}
+    <div style="background:var(--white); border:1px solid rgba(0,0,0,0.07); border-radius:var(--radius); padding:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <a href="{{ url_for('trip.trip_detail', id=review.trip_id) }}" style="font-size:14px; font-weight:500; color:var(--navy);">{{ review.trip.name }}</a>
+        <span style="color:var(--terra); font-size:15px; letter-spacing:2px;">{% for i in range(review.rating) %}★{% endfor %}{% for i in range(5 - review.rating) %}☆{% endfor %}</span>
+      </div>
+      <p style="font-size:14px; color:var(--text-soft);">{{ review.comment }}</p>
+      <p style="font-size:12px; color:#bbb; margin-top:6px;">{{ review.created_at.strftime('%b %d, %Y') }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p style="color:var(--text-soft);">No reviews written yet.</p>
+  {% endif %}
+
+</div>
+{% endblock %}

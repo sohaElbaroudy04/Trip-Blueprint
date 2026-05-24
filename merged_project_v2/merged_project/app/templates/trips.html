@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}My Trips{% endblock %}
+{% block content %}
+<div class="page">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+    <div>
+      <h1 class="page-title">My Trips</h1>
+      <p class="page-subtitle">Your personal trip blueprints.</p>
+    </div>
+    <a href="{{ url_for('trip.new_trip') }}" class="btn-primary">+ New Trip</a>
+  </div>
+
+  <div class="trip-grid">
+    {% for trip in trips %}
+    <div class="trip-card">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+        <h3 style="margin:0;">{{ trip.name }}</h3>
+        {% if trip.is_public %}
+        <span style="font-size:11px; background:#E1F5EE; color:#0F6E56; padding:2px 8px; border-radius:20px; flex-shrink:0; margin-left:8px;">Public</span>
+        {% else %}
+        <span style="font-size:11px; background:#f0f0f0; color:#888; padding:2px 8px; border-radius:20px; flex-shrink:0; margin-left:8px;">Private</span>
+        {% endif %}
+      </div>
+      <p>📍 {{ trip.destination }}</p>
+      {% if trip.duration_days %}
+      <p>🗓 {{ trip.duration_days }} days</p>
+      {% endif %}
+      <p class="budget">${{ trip.budget }} total</p>
+      <div style="display:flex; gap:10px; margin-top:14px; align-items:center;">
+        <a href="{{ url_for('trip.trip_detail', id=trip.id) }}" style="font-size:13px; color:var(--blue); font-weight:500;">View & Edit →</a>
+        <form method="POST" action="{{ url_for('trip.delete_trip', id=trip.id) }}" onsubmit="return confirm('Delete this trip?')" style="margin:0;">
+          <button type="submit" class="btn-danger" style="font-size:12px; padding:4px 10px;">Delete</button>
+        </form>
+      </div>
+    </div>
+    {% else %}
+    <div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--text-soft);">
+      <p style="font-size:16px; margin-bottom:16px;">You haven't shared any trips yet.</p>
+      <a href="{{ url_for('trip.new_trip') }}" class="btn-primary">Share your first trip</a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+{% block title %}{{ trip.name }}{% endblock %}
+{% block content %}
+
+<div class="page">
+
+<!-- Hero Photo -->
+  {% if trip.image_filename %}
+  <div style="position:relative; height:420px; border-radius:var(--radius); overflow:hidden; margin-bottom:36px;">
+    <img src="{{ url_for('static', filename='uploads/' + trip.image_filename) }}"
+         style="width:100%; height:100%; object-fit:cover;" />
+    <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(21,41,53,0.85) 0%, rgba(21,41,53,0.2) 60%, transparent 100%);"></div>
+    <div style="position:absolute; bottom:0; left:0; padding:32px;">
+      <a href="{{ url_for('trip.home') }}" style="font-size:13px; color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:12px;">← Back to Browse</a>
+      <h1 style="font-family:var(--font-heading); font-size:42px; font-weight:500; color:var(--white); margin:0 0 10px; line-height:1.1;">{{ trip.name }}</h1>
+      <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center;">
+        <span style="font-size:14px; color:rgba(255,255,255,0.85);">📍 {{ trip.destination }}</span>
+        {% if trip.duration_days %}
+        <span style="font-size:14px; color:rgba(255,255,255,0.85);">🗓 {{ trip.duration_days }} days</span>
+        {% endif %}
+        {% if trip.start_date %}
+        <span style="font-size:14px; color:rgba(255,255,255,0.85);">{{ trip.start_date.strftime('%b %Y') }}</span>
+        {% endif %}
+        <span style="font-size:15px; font-weight:600; color:var(--peach);">${{ trip.budget | int }} total</span>
+        <span style="font-size:13px; color:rgba(255,255,255,0.75);">by <strong>{{ trip.user.username }}</strong></span>
+        {% if trip.is_public %}
+        <span style="font-size:12px; padding:3px 10px; border-radius:20px; background:rgba(255,255,255,0.2); color:var(--white);">Public</span>
+        {% else %}
+        <span style="font-size:12px; padding:3px 10px; border-radius:20px; background:rgba(255,255,255,0.2); color:var(--white);">Private</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <!-- No photo fallback -->
+  <a href="{{ url_for('trip.home') }}" style="font-size:13px; color:var(--text-soft); text-decoration:none;">← Back to Browse</a>
+  <div style="margin: 20px 0 36px;">
+    <h1 class="page-title">{{ trip.name }}</h1>
+    <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center; margin-top:10px;">
+      <span style="font-size:15px; color:var(--text-soft);">📍 {{ trip.destination }}</span>
+      {% if trip.duration_days %}
+      <span style="font-size:15px; color:var(--text-soft);">🗓 {{ trip.duration_days }} days</span>
+      {% endif %}
+      <span style="font-size:15px; font-weight:600; color:var(--terra);">${{ trip.budget | int }} total</span>
+      <span style="font-size:13px; color:var(--text-soft);">by <strong>{{ trip.user.username }}</strong></span>
+    </div>
+  </div>
+  {% endif %}
+
+{% if trip.highlights or trip.tips %}
+  <div style="margin-bottom:36px;">
+
+    {% if trip.highlights %}
+    <div style="background:rgba(255,255,255,0.88); backdrop-filter:blur(4px); border-radius:var(--radius); padding:32px; margin-bottom:20px;">
+      <h2 style="font-family:var(--font-heading); font-size:24px; color:var(--navy); margin-bottom:20px;">✨ Highlights</h2>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px;">
+        {% for line in trip.highlights.split('\n') %}
+          {% if line.strip() %}
+          <div style="display:flex; gap:12px; align-items:flex-start; background:var(--sand); border-radius:var(--radius-sm); padding:14px;">
+            <span style="color:var(--terra); font-size:18px; flex-shrink:0; line-height:1;">✦</span>
+            <span style="font-size:14px; color:var(--navy); line-height:1.6;">{{ line.strip().lstrip('- ') }}</span>
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if trip.tips %}
+    <div style="background:rgba(255,255,255,0.88); backdrop-filter:blur(4px); border-radius:var(--radius); padding:32px;">
+      <h2 style="font-family:var(--font-heading); font-size:24px; color:var(--navy); margin-bottom:20px;">💡 Honest Tips</h2>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        {% for line in trip.tips.split('\n') %}
+          {% if line.strip() %}
+          <div style="display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid rgba(0,0,0,0.05);">
+            <span style="color:var(--blue); font-size:16px; flex-shrink:0; line-height:1; font-weight:600;">→</span>
+            <span style="font-size:14px; color:var(--navy); line-height:1.6;">{{ line.strip().lstrip('- ') }}</span>
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+  {% endif %}
+  <!-- Accommodation -->
+  {% if trip.accommodation %}
+  <div style="background:rgba(255,255,255,0.85); backdrop-filter:blur(4px); border-radius:var(--radius); padding:24px; margin-bottom:36px;">
+    <h2 style="font-family:var(--font-heading); font-size:20px; color:var(--navy); margin-bottom:14px;">🏨 Where to Stay</h2>
+    <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;">
+      {% for line in trip.accommodation.split('\n') %}
+        {% if line.strip() %}
+        <li style="font-size:14px; color:var(--navy); line-height:1.6; display:flex; gap:8px; align-items:flex-start;">
+          <span style="color:var(--terra); flex-shrink:0;">🏨</span>
+          <span>{{ line.strip().lstrip('- ') }}</span>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- Places -->
+  <div style="margin-bottom:36px;">
+    <h2 style="font-family:var(--font-heading); font-size:24px; color:var(--navy); margin-bottom:20px;">📍 Places & Stops</h2>
+
+    {% if places %}
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      {% for place in places|sort(attribute='day_number') %}
+      <div style="background:rgba(255,255,255,0.88); border:1px solid rgba(0,0,0,0.07); border-radius:var(--radius); padding:20px; display:grid; grid-template-columns:auto 1fr auto; gap:20px; align-items:start; backdrop-filter:blur(4px);">
+
+        <!-- Day badge -->
+        <div style="text-align:center; min-width:60px;">
+          {% if place.day_number %}
+          <div style="background:var(--blue); color:var(--white); border-radius:8px; padding:6px 10px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Day {{ place.day_number }}</div>
+          {% endif %}
+          {% if place.recommended %}
+          <div style="margin-top:6px; font-size:11px; color:#0F6E56;">★ recommended</div>
+          {% else %}
+          <div style="margin-top:6px; font-size:11px; color:#888;">skip it</div>
+          {% endif %}
+        </div>
+
+        <!-- Details -->
+        <div>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px; flex-wrap:wrap;">
+            <h3 style="font-family:var(--font-heading); font-size:18px; color:var(--navy); margin:0;">{{ place.name }}</h3>
+            <span style="font-size:12px; background:var(--sage); padding:2px 10px; border-radius:20px; color:var(--navy);">{{ place.category }}</span>
+          </div>
+          {% if place.opening_hours %}
+          <p style="font-size:12px; color:var(--text-soft); margin-bottom:8px;">🕐 {{ place.opening_hours }}</p>
+          {% endif %}
+          {% if place.notes %}
+          <p style="font-size:14px; color:var(--navy); line-height:1.7;">{{ place.notes }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Cost -->
+        <div style="text-align:right; min-width:60px;">
+          {% if place.est_cost > 0 %}
+          <span style="font-size:16px; font-weight:600; color:var(--terra);">${{ place.est_cost }}</span>
+          {% else %}
+          <span style="font-size:13px; color:#0F6E56; font-weight:500;">Free</span>
+          {% endif %}
+
+          {% if current_user.is_authenticated and trip.user_id == current_user.id %}
+          <form method="POST" action="{{ url_for('place.delete_place', place_id=place.id) }}" style="margin-top:8px;">
+            <button type="submit" class="btn-danger" style="font-size:11px; padding:3px 8px;">Remove</button>
+          </form>
+          {% endif %}
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <p style="color:var(--text-soft); font-size:14px;">No places added yet.</p>
+    {% endif %}
+
+    <!-- Add Place (owner only) -->
+    {% if current_user.is_authenticated and trip.user_id == current_user.id %}
+    <div style="background:rgba(255,255,255,0.85); border-radius:var(--radius); padding:24px; margin-top:20px; backdrop-filter:blur(4px);">
+      <h3 style="font-family:var(--font-heading); font-size:18px; color:var(--navy); margin-bottom:16px;">+ Add a Place</h3>
+      <form method="POST" action="{{ url_for('place.add_place', trip_id=trip.id) }}">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="form-group">
+            <label>Place Name</label>
+            <input type="text" name="name" required placeholder="e.g. Narikala Fortress" />
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select name="category">
+              <option>Sightseeing</option>
+              <option>Nature</option>
+              <option>Food & Drink</option>
+              <option>Beach</option>
+              <option>Adventure</option>
+              <option>Culture</option>
+              <option>Shopping</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Day Number</label>
+            <input type="number" name="day_number" placeholder="e.g. 3" />
+          </div>
+          <div class="form-group">
+            <label>Opening Hours</label>
+            <input type="text" name="opening_hours" placeholder="e.g. 9am - 5pm" />
+          </div>
+          <div class="form-group">
+            <label>Estimated Cost ($)</label>
+            <input type="number" name="est_cost" step="0.01" placeholder="0 if free" />
+          </div>
+          <div class="form-group">
+            <label>Would you recommend it?</label>
+            <select name="recommended">
+              <option value="true">Yes, recommend</option>
+              <option value="false">Skip it</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes & Tips</label>
+          <textarea name="notes" rows="3" placeholder="What should people know? Best time to go, what to order, insider tips..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Add Place</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Reviews -->
+  <div style="margin-bottom:36px;">
+    <h2 style="font-family:var(--font-heading); font-size:24px; color:var(--navy); margin-bottom:20px;">💬 Reviews</h2>
+
+    {% if trip.reviews %}
+    <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:24px;">
+      {% for review in trip.reviews %}
+      <div style="background:rgba(255,255,255,0.85); border:1px solid rgba(0,0,0,0.07); border-radius:var(--radius); padding:20px; backdrop-filter:blur(4px);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-size:14px; font-weight:600; color:var(--navy);">{{ review.user.username }}</span>
+            <span style="color:var(--terra); font-size:16px; letter-spacing:2px;">
+              {% for i in range(review.rating) %}★{% endfor %}{% for i in range(5 - review.rating) %}☆{% endfor %}
+            </span>
+          </div>
+          <span style="font-size:12px; color:#bbb;">{{ review.created_at.strftime('%b %d, %Y') }}</span>
+        </div>
+        <p style="font-size:14px; color:var(--navy); line-height:1.7;">{{ review.comment }}</p>
+        {% if current_user.is_authenticated and review.user_id == current_user.id %}
+        <form method="POST" action="{{ url_for('place.delete_review', review_id=review.id) }}" style="margin-top:10px;">
+          <button type="submit" class="btn-danger" style="font-size:12px; padding:4px 10px;">Delete my review</button>
+        </form>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p style="color:var(--text-soft); font-size:14px; margin-bottom:24px;">No reviews yet — be the first.</p>
+    {% endif %}
+
+    <!-- Add Review (not owner) -->
+    {% if current_user.is_authenticated and trip.user_id != current_user.id %}
+    <div style="background:rgba(255,255,255,0.85); border-radius:var(--radius); padding:24px; backdrop-filter:blur(4px);">
+      <h3 style="font-family:var(--font-heading); font-size:18px; color:var(--navy); margin-bottom:16px;">Leave a Review</h3>
+      <form method="POST" action="{{ url_for('place.add_review', trip_id=trip.id) }}">
+        <div style="display:grid; grid-template-columns:200px 1fr; gap:14px; align-items:start;">
+          <div class="form-group">
+            <label>Rating</label>
+            <select name="rating">
+              <option value="5">★★★★★ — Perfect</option>
+              <option value="4">★★★★☆ — Great</option>
+              <option value="3">★★★☆☆ — Good</option>
+              <option value="2">★★☆☆☆ — Okay</option>
+              <option value="1">★☆☆☆☆ — Disappointing</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Your Review</label>
+            <textarea name="comment" rows="3" placeholder="Was the guide helpful? What would you add? What surprised you?"></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Submit Review</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Delete (owner only) -->
+  {% if current_user.is_authenticated and trip.user_id == current_user.id %}
+  <div style="padding-top:24px; border-top:1px solid var(--sage);">
+    <form method="POST" action="{{ url_for('trip.delete_trip', id=trip.id) }}" onsubmit="return confirm('Are you sure you want to delete this trip?')">
+      <button type="submit" class="btn-danger">Delete Trip</button>
+    </form>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

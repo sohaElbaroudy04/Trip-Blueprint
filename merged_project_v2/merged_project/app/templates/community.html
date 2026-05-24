@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Community Wishlists{% endblock %}
+{% block content %}
+<div class="page">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+    <div>
+      <h1 class="page-title">Community Wishlists</h1>
+      <p class="page-subtitle">Dream trips people want to take — share yours.</p>
+    </div>
+    <a href="{{ url_for('community.new_wishlist') }}" class="btn-primary">+ Share a Wishlist</a>
+  </div>
+
+  <div class="trip-grid">
+    {% for wishlist in wishlists %}
+    <div class="trip-card">
+      <h3>{{ wishlist.title }}</h3>
+      <p>📍 {{ wishlist.destination }}</p>
+      {% if wishlist.duration_days %}
+      <p>🗓 {{ wishlist.duration_days }} days</p>
+      {% endif %}
+      <p class="budget">${{ wishlist.estimated_budget }} estimated</p>
+      <p style="font-size:12px; color:var(--text-soft); margin-top:6px;">by {{ wishlist.user.username }}</p>
+      <a href="{{ url_for('community.wishlist_detail', id=wishlist.id) }}">View Details →</a>
+    </div>
+    {% else %}
+    <p style="color:var(--text-soft);">No public wishlists yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

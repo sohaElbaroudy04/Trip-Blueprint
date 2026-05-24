@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Search Results{% endblock %}
+{% block content %}
+<div class="page">
+  <h1 class="page-title">
+    {% if query %}Results for "{{ query }}"
+    {% else %}Search Trips{% endif %}
+  </h1>
+  <p class="page-subtitle">{{ results|length }} trip{{ 's' if results|length != 1 }} found</p>
+<form action="{{ url_for('trip.search') }}" method="GET" class="search-form">
+  <input 
+    type="text" 
+    name="q" 
+    placeholder="Search by destination..." 
+    value="{{ query or '' }}"
+    class="form-control"
+    style="max-width:400px;"
+  />
+  <button type="submit" class="btn-primary">Search</button>
+</form>
+  <div class="trip-grid">
+    {% for trip in results %}
+    <div class="trip-card">
+      <h3>{{ trip.name }}</h3>
+      <p>📍 {{ trip.destination }}</p>
+      {% if trip.duration_days %}
+      <p>🗓 {{ trip.duration_days }} days</p>
+      {% endif %}
+      <p class="budget">${{ trip.budget }} total</p>
+      <p style="font-size:12px; color:var(--text-soft);">by {{ trip.user.username }}</p>
+      <a href="{{ url_for('trip.trip_detail', id=trip.id) }}">View Blueprint →</a>
+    </div>
+    {% else %}
+    
+  <p style="color:var(--text-soft);">
+    No trips found. Try searching for another destination, or add some public trips first.
+  </p>
+    
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

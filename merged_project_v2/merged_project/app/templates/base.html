@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}TripBlueprint{% endblock %}</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  {% block extra_styles %}{% endblock %}
+</head>
+
+<body>
+
+  <!-- ── Navbar ── -->
+  <nav class="navbar">
+    <a href="{{ url_for('auth.index') }}" class="navbar-logo">
+      Trip<span>Blueprint</span>
+    </a>
+
+    <ul class="navbar-links">
+      <li><a href="{{ url_for('trip.home') }}" class="{{ 'active' if request.endpoint == 'home' }}">Browse</a></li>
+      <li><a href="{{ url_for('trip.search') }}" class="{{ 'active' if request.endpoint == 'search' }}">Search</a></li>
+      {% if current_user.is_authenticated %}
+      <li><a href="{{ url_for('trip.trips') }}" class="{{ 'active' if request.endpoint == 'my_trips' }}">My Trips</a></li>
+      {% endif %}
+    </ul>
+
+    <div class="navbar-actions">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('trip.new_trip') }}" class="btn btn-primary btn-sm">+ Share a Trip</a>
+        <a href="{{url_for('auth.profile')}}" class="btn btn-outline btn-sm">{{ current_user.username }}</a>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm">Log out</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-sm">Log in</a>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-sm">Sign up</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- ── Flash Messages ── -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-container">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">
+            <span>{{ message }}</span>
+            <button class="flash-close" onclick="this.parentElement.remove()">✕</button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- ── Main Content ── -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+  <div>
+    <strong>TripBlueprint</strong> — Real trips. Honest advice. No sponsored content.
+  </div>
+  <div style="margin-top:6px; font-size:12px; opacity:0.7;">
+    Built by 3rd year CS students · Software Engineering · Because the best travel advice comes from real people, not tourism blogs.
+  </div>
+</footer>
+  <!-- ── Auto-dismiss flash messages ── -->
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('.flash').forEach(el => {
+        el.style.transition = 'opacity 0.4s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 400);
+      });
+    }, 4000);
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+
+</body>
+</html>

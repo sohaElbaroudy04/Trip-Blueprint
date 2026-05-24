@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Filter Results{% endblock %}
+{% block content %}
+<div class="page">
+  <h1 class="page-title">Trips by Budget</h1>
+  <p class="page-subtitle">
+    {% if min_budget and max_budget %}Between ${{ min_budget }} and ${{ max_budget }}
+    {% elif max_budget %}Under ${{ max_budget }}
+    {% elif min_budget %}Over ${{ min_budget }}
+    {% endif %}
+  </p>
+
+  <div class="trip-grid">
+    {% for trip in trips %}
+    <div class="trip-card">
+      <h3>{{ trip.name }}</h3>
+      <p>📍 {{ trip.destination }}</p>
+      <p class="budget">${{ trip.budget }} total</p>
+      <p style="font-size:12px; color:var(--text-soft);">by {{ trip.user.username }}</p>
+      <a href="{{ url_for('trip.trip_detail', id=trip.id) }}">View Blueprint →</a>
+    </div>
+    {% else %}
+    <p style="color:var(--text-soft);">No trips found in this budget range.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

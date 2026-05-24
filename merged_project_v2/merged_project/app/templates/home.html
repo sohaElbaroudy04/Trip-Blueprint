@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Browse Trips{% endblock %}
+{% block content %}
+
+<div class="page">
+ <div style="margin-bottom:36px; background:rgba(255,255,255,0.75); backdrop-filter:blur(8px); padding:24px 28px; border-radius:var(--radius);">
+  <h1 class="page-title">Browse Trips</h1>
+  <p class="page-subtitle">Real itineraries from real travelers — steal someone's perfect trip.</p>
+</div>
+
+  <div style="display:flex; flex-direction:column; gap:20px;">
+    {% for trip in trips %}
+    <div class="trip-card-row">
+
+      <!-- Photo -->
+      <div style="overflow:hidden; min-height:220px;">
+        {% if trip.image_filename %}
+        <img src="{{ url_for('static', filename='uploads/' + trip.image_filename) }}"
+             style="width:100%; height:220px; object-fit:cover; transition:transform 0.3s;"
+             onmouseover="this.style.transform='scale(1.05)'"
+             onmouseout="this.style.transform='scale(1)'" />
+        {% else %}
+        <div style="background:var(--sage); height:220px; display:flex; align-items:center; justify-content:center; color:var(--text-soft); font-size:13px;">📸 no photo yet</div>
+        {% endif %}
+      </div>
+
+      <!-- Content -->
+      <div style="padding:24px 28px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+            <span style="font-size:12px; background:var(--terra); color:var(--white); padding:3px 10px; border-radius:20px; font-weight:500;">{{ trip.destination }}</span>
+            {% if trip.duration_days %}
+            <span style="font-size:12px; color:var(--text-soft);">🗓 {{ trip.duration_days }} days</span>
+            {% endif %}
+            <span style="font-size:12px; color:var(--text-soft);">by {{ trip.user.username }}</span>
+          </div>
+          <h3 style="font-family:var(--font-heading); font-size:22px; color:var(--navy); margin-bottom:8px;">{{ trip.name }}</h3>
+          {% if trip.highlights %}
+          <p style="font-size:13px; color:var(--text-soft); line-height:1.6;">{{ trip.highlights[:120] }}...</p>
+          {% endif %}
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:16px;">
+          <span style="font-size:18px; font-weight:600; color:var(--terra);">${{ trip.budget | int }} total</span>
+          <a href="{{ url_for('trip.trip_detail', id=trip.id) }}" style="background:var(--navy); color:var(--white); padding:8px 20px; border-radius:var(--radius); font-size:13px; font-weight:500; text-decoration:none;">View Blueprint →</a>
+        </div>
+      </div>
+
+    </div>
+    {% else %}
+    <p style="color:var(--text-soft);">No public trips yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
