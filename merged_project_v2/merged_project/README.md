@@ -1,4 +1,4 @@
-#  TripBlueprint
+<img width="1862" height="933" alt="image" src="https://github.com/user-attachments/assets/081aefbd-234c-4b47-b28c-013d62c71c50" />#  TripBlueprint
 
 TripBlueprint is a Flask web application that lets travelers share and learn from real trip experiences. Browse detailed itineraries from people who've already been where you want to go, use their plans as a blueprint, and adapt them to fit your own trip. Add places, track budgets, and contribute your own experiences back to the community.
 ---
@@ -73,7 +73,7 @@ docker run -p 5000:5000 tripblueprint
 
 ---
 
-## 🗄️ Database Tables
+## Database Tables
 
 | Table | Fields |
 |-------|--------|
@@ -81,6 +81,12 @@ docker run -p 5000:5000 tripblueprint
 | `trip` | id, user_id, name, destination, budget, is_public |
 | `place` | id, trip_id, name, category, est_cost |
 | `wishlist` | id, user_id, title, destination, description |
+
+---
+## Screenshots
+<img width="1862" height="933" alt="Screenshot 2026-06-10 172037" src="https://github.com/user-attachments/assets/1caa83e2-8ba2-443f-b6ba-6cb35f601dd1" />
+<img width="1866" height="937" alt="Screenshot 2026-06-10 172359" src="https://github.com/user-attachments/assets/11507b82-1c0e-492a-b709-d06812372d0e" />
+<img width="1867" height="932" alt="Screenshot 2026-06-10 172507" src="https://github.com/user-attachments/assets/735d356c-5ba7-4591-93eb-31bcd61d7a4b" />
 
 ---
 
